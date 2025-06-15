@@ -23,13 +23,29 @@ npm install
 2. Скопируйте содержимое из файла `env.example`
 3. Замените значения на реальные данные для подключения к базе данных
 
+### Подключение к базе данных
+
+База данных PostgreSQL уже создана на render.com. Данные для подключения:
+
+- Database Name: matrix_ai
+- Username: matrix_user
+- Password: mVqhehVKabCp0FGf35NTSJKlRGXXLoPi
+- Host: dpg-d17eeoemcj7s73d45j40-a.frankfurt-postgres.render.com
+- Port: 5432
+
+Эти данные уже настроены в файле `config/database.js`.
+
 ### Инициализация базы данных
 
 ```bash
-npm run init-db
+node scripts/initDb.js
 ```
 
-Этот скрипт создаст все необходимые таблицы в базе данных и добавит тестовые данные.
+Этот скрипт создаст все необходимые таблицы в базе данных и добавит тестовые данные:
+- Администратор: admin@matrixai.com / admin123
+- Пользователь: user@matrixai.com / user123
+- Тестовые источники данных (ВКонтакте, Telegram)
+- Тестовые события и отчеты
 
 ## Запуск сервера
 
@@ -88,8 +104,4 @@ npm start
 - `POST /api/reports` - Создание нового отчета
 - `POST /api/reports/:id/generate` - Запуск генерации отчета
 - `DELETE /api/reports/:id` - Удаление отчета
-- `GET /api/reports/templates/list` - Получение списка шаблонов отчетов
-
-## База данных
-
-База данных размещена на Render.com. Для подключения используйте данные из файла `.env`. 
+- `GET /api/reports/templates/list` - Получение списка шаблонов отчетов 
