@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix AI - Вход</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="src/styles/main.css">
+    <link rel="stylesheet" href="src/styles/notifications.css">
+</head>
+<body>
+    <!-- Matrix Background Effect -->
+    <canvas class="matrix-background" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></canvas>
+    
+    <div class="login-container">
+        <div class="glass-container">
+            <!-- Decorative Elements -->
+            <div class="decorative-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            
+            <!-- Header -->
+            <div class="header">
+                <div class="logo">MATRIX AI</div>
+                <div class="subtitle">Мониторинг и управление системами</div>
+            </div>
+            
+            <!-- Login Form -->
+            <form id="login-form" class="form-section">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" class="form-control" placeholder="Введите ваш email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" class="form-control" placeholder="Введите ваш пароль" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Войти
+                </button>
+                
+                <button type="button" id="register-button" class="btn btn-secondary">
+                    <i class="fas fa-user-plus"></i> Регистрация
+                </button>
+            </form>
+            
+            <!-- Demo Accounts -->
+            <div class="demo-panel">
+                <div class="demo-header">Тестовые аккаунты</div>
+                
+                <div class="demo-item">
+                    <div class="demo-credentials">
+                        <div class="demo-email">admin@matrix.ai</div>
+                        <div class="demo-password">admin123</div>
+                    </div>
+                    <button class="quick-login" data-email="admin@matrix.ai" data-password="admin123">Быстрый вход</button>
+                </div>
+                
+                <div class="demo-item">
+                    <div class="demo-credentials">
+                        <div class="demo-email">user@matrix.ai</div>
+                        <div class="demo-password">user123</div>
+                    </div>
+                    <button class="quick-login" data-email="user@matrix.ai" data-password="user123">Быстрый вход</button>
+                </div>
+                
+                <div class="demo-item">
+                    <div class="demo-credentials">
+                        <div class="demo-email">demo@matrix.ai</div>
+                        <div class="demo-password">demo123</div>
+                    </div>
+                    <button class="quick-login" data-email="demo@matrix.ai" data-password="demo123">Быстрый вход</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification Container -->
+    <div id="notification-container"></div>
+    
+    <!-- Scripts -->
+    <script src="src/scripts/matrix-background.js"></script>
+    <script src="src/scripts/notification-manager.js"></script>
+    <script src="src/scripts/global-utils.js"></script>
+    <script src="src/scripts/app.js"></script>
+    <script>
+        // Инициализация обработчиков для страницы входа
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация матричного фона
+            if (typeof initMatrixBackground === 'function') {
+                initMatrixBackground();
+            }
+            
+            // Обработчик формы входа
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                // Проверка учетных данных (в реальном приложении здесь будет API-запрос)
+                if (validateCredentials(email, password)) {
+                    showNotification('success', 'Вход выполнен успешно!');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                } else {
+                    showNotification('error', 'Неверный email или пароль');
+                }
+            });
+            
+            // Обработчик кнопки регистрации
+            document.getElementById('register-button').addEventListener('click', function() {
+                showNotification('info', 'Переход на страницу регистрации...');
+                setTimeout(() => {
+                    // В реальном приложении здесь будет переход на страницу регистрации
+                    showNotification('warning', 'Функция регистрации находится в разработке');
+                }, 1500);
+            });
+            
+            // Обработчики быстрого входа
+            document.querySelectorAll('.quick-login').forEach(button => {
+                button.addEventListener('click', function() {
+                    const email = this.getAttribute('data-email');
+                    const password = this.getAttribute('data-password');
+                    
+                    document.getElementById('email').value = email;
+                    document.getElementById('password').value = password;
+                    
+                    showNotification('info', `Выполняется вход с тестовым аккаунтом: ${email}`);
+                    
+                    setTimeout(() => {
+                        document.getElementById('login-form').dispatchEvent(new Event('submit'));
+                    }, 1000);
+                });
+            });
+        });
+        
+        // Функция проверки учетных данных
+        function validateCredentials(email, password) {
+            // Проверка тестовых аккаунтов
+            const testAccounts = [
+                { email: 'admin@matrix.ai', password: 'admin123' },
+                { email: 'user@matrix.ai', password: 'user123' },
+                { email: 'demo@matrix.ai', password: 'demo123' }
+            ];
+            
+            return testAccounts.some(account => 
+                account.email === email && account.password === password
+            );
+        }
+    </script>
+</body>
+</html>
