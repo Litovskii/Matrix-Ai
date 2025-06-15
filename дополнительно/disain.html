@@ -1,0 +1,2170 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Advanced System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0d1421 0%, #1a1a2e 50%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Matrix Rain Effect */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .matrix-char {
+            position: absolute;
+            color: #00ff41;
+            font-family: monospace;
+            font-size: 14px;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-100vh); opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+
+        /* Login Screen */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid #00ff41;
+            border-radius: 15px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+        }
+
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #00ff41;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #00ff41;
+        }
+
+        .login-subtitle {
+            color: #00cc33;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #00ff41;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00ff41;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #00ff41;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #00ff41, #00cc33);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 0;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 65, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #00ff41;
+            color: #00ff41;
+        }
+
+        .test-accounts {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 255, 65, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 65, 0.2);
+        }
+
+        .test-accounts h4 {
+            color: #00ff41;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .test-account {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.1);
+            font-size: 12px;
+        }
+
+        .test-account:last-child {
+            border-bottom: none;
+        }
+
+        .quick-login {
+            background: none;
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 10px;
+        }
+
+        /* Main Dashboard */
+        .dashboard {
+            display: none;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-bottom: 2px solid #00ff41;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff41;
+            text-shadow: 0 0 10px #00ff41;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-item {
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(0, 255, 65, 0.2);
+            border-color: #00ff41;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00ff41, #00cc33);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid #ff4757;
+            border-radius: 20px;
+            color: #ff4757;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #ff4757;
+            color: #fff;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 30px;
+        }
+
+        .welcome-section {
+            background: rgba(0, 255, 65, 0.1);
+            border: 1px solid #00ff41;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .welcome-title {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: #00ff41;
+        }
+
+        .system-time {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 14px;
+            color: #00ff41;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: #00ff41;
+            box-shadow: 0 10px 25px rgba(0, 255, 65, 0.2);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.1), transparent);
+            animation: scan 3s infinite;
+        }
+
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .stat-title {
+            color: #00ff41;
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-change {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff41, #00cc33);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        /* Alert Status */
+        .alert-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .alert-success {
+            background: rgba(0, 255, 65, 0.2);
+            color: #00ff41;
+        }
+
+        .alert-warning {
+            background: rgba(255, 165, 2, 0.2);
+            color: #ffa502;
+        }
+
+        .alert-danger {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+        }
+
+        /* Extended Sections */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-title {
+            color: #00ff41;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Monitoring Section */
+        .monitoring-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .server-list {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .server-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: rgba(0, 255, 65, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid;
+        }
+
+        .server-online {
+            border-left-color: #00ff41;
+        }
+
+        .server-warning {
+            border-left-color: #ffa502;
+        }
+
+        .server-offline {
+            border-left-color: #ff4757;
+        }
+
+        .server-info h4 {
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .server-info p {
+            color: #888;
+            font-size: 12px;
+        }
+
+        /* Activity Feed */
+        .activity-feed {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: rgba(0, 255, 65, 0.05);
+            border-radius: 8px;
+            border-left: 3px solid #00ff41;
+        }
+
+        .activity-time {
+            font-size: 11px;
+            color: #00ff41;
+            min-width: 60px;
+        }
+
+        .activity-message {
+            flex: 1;
+            font-size: 13px;
+        }
+
+        /* Terminal Section */
+        .terminal {
+            background: #000;
+            border: 2px solid #00ff41;
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            min-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .terminal-line {
+            color: #00ff41;
+            margin-bottom: 5px;
+            word-wrap: break-word;
+        }
+
+        .terminal-input {
+            width: 100%;
+            background: #000;
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+            padding: 15px;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .terminal-input:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+
+        /* Security Section */
+        .security-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .threat-card {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .threat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: rgba(255, 71, 87, 0.1);
+            border-radius: 8px;
+            border-left: 3px solid #ff4757;
+        }
+
+        /* Network Section */
+        .network-map {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .network-node {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #00ff41, #00cc33);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-weight: bold;
+            font-size: 12px;
+            animation: pulse 2s infinite;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+        }
+
+        .network-connection {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, #00ff41, #00cc33);
+            opacity: 0.6;
+            animation: dataFlow 2s infinite;
+        }
+
+        @keyframes dataFlow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; box-shadow: 0 0 10px #00ff41; }
+        }
+
+        /* Control Panel */
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .control-btn {
+            background: rgba(0, 255, 65, 0.1);
+            border: 2px solid #00ff41;
+            border-radius: 15px;
+            padding: 20px;
+            color: #00ff41;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 255, 65, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 255, 65, 0.3);
+        }
+
+        .control-btn.danger {
+            border-color: #ff4757;
+            color: #ff4757;
+            background: rgba(255, 71, 87, 0.1);
+        }
+
+        .control-btn.danger:hover {
+            background: rgba(255, 71, 87, 0.2);
+            box-shadow: 0 10px 20px rgba(255, 71, 87, 0.3);
+        }
+
+        /* Profile Section */
+        .profile-section {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .profile-card {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid #00ff41;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00ff41, #00cc33);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .profile-info h2 {
+            color: #00ff41;
+            margin-bottom: 5px;
+        }
+
+        /* Settings Section */
+        .settings-section {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: rgba(0, 255, 65, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 65, 0.2);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: #00ff41;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: #fff;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #00ff41;
+            animation: pulse 2s infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 255, 65, 0.9);
+            color: #000;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification.error {
+            background: rgba(255, 71, 87, 0.9);
+            color: #fff;
+        }
+
+        .notification.warning {
+            background: rgba(255, 165, 2, 0.9);
+            color: #000;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .monitoring-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg" id="matrixBg"></div>
+
+    <!-- Login Screen -->
+    <div class="login-container" id="loginScreen">
+        <div class="login-box">
+            <div class="logo">MATRIX</div>
+            <div class="login-subtitle">Advanced System Monitoring v3.2.1</div>
+            
+            <div id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="Введите email">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Пароль</label>
+                    <input type="password" id="loginPassword" placeholder="Введите пароль">
+                </div>
+                <button class="btn" onclick="login()">Войти в систему</button>
+                <button class="btn btn-secondary" onclick="showRegister()">Регистрация</button>
+                
+                <div class="test-accounts">
+                    <h4>🔓 Тестовые аккаунты</h4>
+                    <div class="test-account">
+                        <div>
+                            <strong>admin@matrix.com</strong><br>
+                            <span style="opacity: 0.7;">admin123</span>
+                        </div>
+                        <button class="quick-login" onclick="quickLogin('admin@matrix.com', 'admin123')">Войти</button>
+                    </div>
+                    <div class="test-account">
+                        <div>
+                            <strong>neo@matrix.com</strong><br>
+                            <span style="opacity: 0.7;">thematrix</span>
+                        </div>
+                        <button class="quick-login" onclick="quickLogin('neo@matrix.com', 'thematrix')">Войти</button>
+                    </div>
+                    <div class="test-account">
+                        <div>
+                            <strong>trinity@matrix.com</strong><br>
+                            <span style="opacity: 0.7;">follow_rabbit</span>
+                        </div>
+                        <button class="quick-login" onclick="quickLogin('trinity@matrix.com', 'follow_rabbit')">Войти</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="registerForm" style="display: none;">
+                <div class="form-group">
+                    <label for="regName">Имя</label>
+                    <input type="text" id="regName" placeholder="Введите имя">
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" placeholder="Введите email">
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Пароль</label>
+                    <input type="password" id="regPassword" placeholder="Введите пароль">
+                </div>
+                <button class="btn" onclick="register()">Создать аккаунт</button>
+                <button class="btn btn-secondary" onclick="showLogin()">Уже есть аккаунт?</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <div class="header">
+            <div class="header-left">
+                <div class="header-logo">MATRIX</div>
+                <div class="nav-menu">
+                    <div class="nav-item active" onclick="showSection('home')">Главная</div>
+                    <div class="nav-item" onclick="showSection('monitoring')">Мониторинг</div>
+                    <div class="nav-item" onclick="showSection('terminal')">Терминал</div>
+                    <div class="nav-item" onclick="showSection('security')">Безопасность</div>
+                    <div class="nav-item" onclick="showSection('network')">Сеть</div>
+                    <div class="nav-item" onclick="showSection('profile')">Профиль</div>
+                    <div class="nav-item" onclick="showSection('settings')">Настройки</div>
+                </div>
+            </div>
+            <div class="user-info">
+                <span id="systemStatus">Система активна</span>
+                <div class="status-indicator"></div>
+                <div class="user-avatar" id="userAvatar">A</div>
+                <span id="userName">Admin</span>
+                <button class="logout-btn" onclick="logout()">Выйти</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Home Section -->
+            <div id="homeSection" class="section active">
+                <div class="welcome-section">
+                    <div class="system-time" id="systemTime"></div>
+                    <div class="welcome-title">Matrix System Dashboard</div>
+                    <p>Система мониторинга и управления активна • Uptime: <span id="uptime">0д 0ч 0м</span></p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-title">CPU Usage</div>
+                        <div class="stat-value" id="cpuValue">45%</div>
+                        <div class="stat-change" id="cpuChange">+2.3% от вчера</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="cpuProgress" style="width: 45%;"></div>
+                        </div>
+                        <div class="alert-status alert-success">Нормально</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-title">Memory Usage</div>
+                        <div class="stat-value" id="memoryValue">67%</div>
+                        <div class="stat-change" id="memoryChange">-1.2% от вчера</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="memoryProgress" style="width: 67%;"></div>
+                        </div>
+                        <div class="alert-status alert-warning">Предупреждение</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-title">Active Users</div>
+                        <div class="stat-value" id="usersValue">127</div>
+                        <div class="stat-change" id="usersChange">+15 новых</div>
+                        <div class="alert-status alert-success">Активно</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-title">Network Load</div>
+                        <div class="stat-value" id="networkValue">23%</div>
+                        <div class="stat-change" id="networkChange">Стабильно</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="networkProgress" style="width: 23%;"></div>
+                        </div>
+                        <div class="alert-status alert-success">Оптимально</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-title">Storage Used</div>
+                        <div class="stat-value" id="storageValue">82%</div>
+                        <div class="stat-change" id="storageChange">+5GB сегодня</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="storageProgress" style="width: 82%;"></div>
+                        </div>
+                        <div class="alert-status alert-warning">Почти заполнено</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-title">System Status</div>
+                        <div class="stat-value" style="color: #00ff41;" id="systemStatusValue">ONLINE</div>
+                        <div class="stat-change">Uptime: 99.9%</div>
+                        <div class="alert-status alert-success">Работает</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-title">Temperature</div>
+                        <div class="stat-value" id="tempValue">42°C</div>
+                        <div class="stat-change" id="tempChange">Нормальная</div>
+                        <div class="alert-status alert-success">Оптимально</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-title">Bandwidth</div>
+                        <div class="stat-value" id="bandwidthValue">1.2 Gbps</div>
+                        <div class="stat-change" id="bandwidthChange">Высокая скорость</div>
+                        <div class="alert-status alert-success">Отлично</div>
+                    </div>
+                </div>
+
+                <div class="control-panel">
+                    <button class="control-btn" onclick="systemScan()">
+                        🔍 Сканирование<br><small>Проверка безопасности</small>
+                    </button>
+                    <button class="control-btn" onclick="optimizeSystem()">
+                        ⚡ Оптимизация<br><small>Улучшить производительность</small>
+                    </button>
+                    <button class="control-btn" onclick="backupData()">
+                        💾 Резервная копия<br><small>Сохранить данные</small>
+                    </button>
+                    <button class="control-btn" onclick="updateSystem()">
+                        🔄 Обновление<br><small>Проверить обновления</small>
+                    </button>
+                    <button class="control-btn danger" onclick="emergencyShutdown()">
+                        🚨 Экстренное отключение<br><small>Аварийная остановка</small>
+                    </button>
+                    <button class="control-btn" onclick="generateReport()">
+                        📊 Отчет<br><small>Создать отчет</small>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Monitoring Section -->
+            <div id="monitoringSection" class="section">
+                <div class="section-title">Мониторинг системы</div>
+                
+                <div class="monitoring-grid">
+                    <div class="server-list">
+                        <h3 style="color: #00ff41; margin-bottom: 20px;">Серверы и службы</h3>
+                        <div id="serversList">
+                            <!-- Servers will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="activity-feed">
+                        <h3 style="color: #00ff41; margin-bottom: 20px;">Журнал активности</h3>
+                        <div id="activityLog">
+                            <!-- Activity will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-title">Requests/sec</div>
+                        <div class="stat-value" id="requestsValue">1,247</div>
+                        <div class="stat-change">HTTP запросов в секунду</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Response Time</div>
+                        <div class="stat-value" id="responseValue">127ms</div>
+                        <div class="stat-change">Среднее время отклика</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Error Rate</div>
+                        <div class="stat-value" id="errorValue">0.02%</div>
+                        <div class="stat-change">Процент ошибок</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Database Queries</div>
+                        <div class="stat-value" id="dbValue">5,432</div>
+                        <div class="stat-change">Запросов к БД/мин</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terminal Section -->
+            <div id="terminalSection" class="section">
+                <div class="section-title">Терминал системы</div>
+                
+                <div class="terminal" id="terminal">
+                    <div class="terminal-line">Matrix Terminal v3.2.1 - Advanced System Console</div>
+                    <div class="terminal-line">Copyright (c) 2024 Matrix Corporation. All rights reserved.</div>
+                    <div class="terminal-line">Connected to: matrix-core-01.local</div>
+                    <div class="terminal-line">User access level: ADMINISTRATOR</div>
+                    <div class="terminal-line"></div>
+                    <div class="terminal-line">Type 'help' for available commands or 'tutorial' for getting started</div>
+                    <div class="terminal-line"></div>
+                    <div class="terminal-line">admin@matrix:~$ <span id="cursor" style="animation: blink 1s infinite;">_</span></div>
+                </div>
+                
+                <input type="text" class="terminal-input" id="terminalInput" 
+                       placeholder="Введите команду..." onkeypress="handleTerminalInput(event)">
+                
+                <div style="margin-top: 20px;">
+                    <h4 style="color: #00ff41; margin-bottom: 10px;">Быстрые команды:</h4>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="control-btn" style="padding: 10px; font-size: 12px;" onclick="executeCommand('status')">status</button>
+                        <button class="control-btn" style="padding: 10px; font-size: 12px;" onclick="executeCommand('ps')">ps</button>
+                        <button class="control-btn" style="padding: 10px; font-size: 12px;" onclick="executeCommand('netstat')">netstat</button>
+                        <button class="control-btn" style="padding: 10px; font-size: 12px;" onclick="executeCommand('df')">df</button>
+                        <button class="control-btn" style="padding: 10px; font-size: 12px;" onclick="executeCommand('clear')">clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Section -->
+            <div id="securitySection" class="section">
+                <div class="section-title">Центр безопасности</div>
+                
+                <div class="security-dashboard">
+                    <div class="threat-card">
+                        <h3 style="color: #ff4757; margin-bottom: 15px;">🛡️ Активные угрозы</h3>
+                        <div id="threatsList">
+                            <!-- Threats will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="threat-card" style="border-color: rgba(0, 255, 65, 0.3);">
+                        <h3 style="color: #00ff41; margin-bottom: 15px;">🔒 Статус защиты</h3>
+                        <div class="server-item server-online">
+                            <div class="server-info">
+                                <h4>Firewall</h4>
+                                <p>Блокировано: 247 попыток за час</p>
+                            </div>
+                            <div class="alert-status alert-success">Активен</div>
+                        </div>
+                        <div class="server-item server-online">
+                            <div class="server-info">
+                                <h4>Antivirus</h4>
+                                <p>Последнее сканирование: 15:30</p>
+                            </div>
+                            <div class="alert-status alert-success">Обновлен</div>
+                        </div>
+                        <div class="server-item server-warning">
+                            <div class="server-info">
+                                <h4>IDS/IPS</h4>
+                                <p>Обнаружено 3 подозрительных события</p>
+                            </div>
+                            <div class="alert-status alert-warning">Внимание</div>
+                        </div>
+                    </div>
+                    
+                    <div class="threat-card" style="border-color: rgba(255, 165, 2, 0.3);">
+                        <h3 style="color: #ffa502; margin-bottom: 15px;">📊 Статистика атак</h3>
+                        <div style="padding: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>DDoS атаки:</span>
+                                <span style="color: #00ff41;">23 заблокировано</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>Brute Force:</span>
+                                <span style="color: #ffa502;">156 попыток</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>Malware:</span>
+                                <span style="color: #00ff41;">0 обнаружено</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Сканирование портов:</span>
+                                <span style="color: #ff4757;">12 активных</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Network Section -->
+            <div id="networkSection" class="section">
+                <div class="section-title">Карта сети</div>
+                
+                <div class="network-map" id="networkMap">
+                    <!-- Network nodes will be generated here -->
+                </div>
+                
+                <div class="stats-grid" style="margin-top: 20px;">
+                    <div class="stat-card">
+                        <div class="stat-title">Active Connections</div>
+                        <div class="stat-value" id="connectionsValue">1,847</div>
+                        <div class="stat-change">Активных подключений</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Data Transfer</div>
+                        <div class="stat-value" id="dataTransferValue">2.4 TB</div>
+                        <div class="stat-change">Передано за сутки</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Latency</div>
+                        <div class="stat-value" id="latencyValue">12ms</div>
+                        <div class="stat-change">Среднее время отклика</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Packet Loss</div>
+                        <div class="stat-value" id="packetLossValue">0.01%</div>
+                        <div class="stat-change">Потери пакетов</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Section -->
+            <div id="profileSection" class="section">
+                <div class="section-title">Профиль пользователя</div>
+                
+                <div class="profile-section">
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            <div class="profile-avatar" id="profileAvatar">A</div>
+                            <div class="profile-info">
+                                <h2 id="profileName">Admin User</h2>
+                                <p id="profileEmail">admin@matrix.com</p>
+                                <p>Администратор системы</p>
+                                <p style="color: #00ff41; margin-top: 10px;">Уровень доступа: ROOT</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Имя пользователя</label>
+                            <input type="text" id="editName" placeholder="Введите имя">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="editEmail" placeholder="Введите email">
+                        </div>
+                        <div class="form-group">
+                            <label>Должность</label>
+                            <input type="text" id="editPosition" placeholder="Введите должность" value="Системный администратор">
+                        </div>
+                        <button class="btn" onclick="updateProfile()">Сохранить изменения</button>
+                    </div>
+                    
+                    <div class="profile-card">
+                        <h3 style="color: #00ff41; margin-bottom: 15px;">📈 Статистика активности</h3>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                            <div style="text-align: center; padding: 15px; background: rgba(0,255,65,0.1); border-radius: 10px;">
+                                <div style="font-size: 24px; font-weight: bold; color: #00ff41;">247</div>
+                                <div style="font-size: 12px; opacity: 0.8;">Команд выполнено</div>
+                            </div>
+                            <div style="text-align: center; padding: 15px; background: rgba(0,255,65,0.1); border-radius: 10px;">
+                                <div style="font-size: 24px; font-weight: bold; color: #00ff41;">15ч 42м</div>
+                                <div style="font-size: 12px; opacity: 0.8;">Время в системе</div>
+                            </div>
+                            <div style="text-align: center; padding: 15px; background: rgba(0,255,65,0.1); border-radius: 10px;">
+                                <div style="font-size: 24px; font-weight: bold; color: #00ff41;">32</div>
+                                <div style="font-size: 12px; opacity: 0.8;">Системных событий</div>
+                            </div>
+                            <div style="text-align: center; padding: 15px; background: rgba(0,255,65,0.1); border-radius: 10px;">
+                                <div style="font-size: 24px; font-weight: bold; color: #00ff41;">99.9%</div>
+                                <div style="font-size: 12px; opacity: 0.8;">Доступность</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div id="settingsSection" class="section">
+                <div class="section-title">Настройки системы</div>
+                
+                <div class="settings-section">
+                    <div class="profile-card">
+                        <h2 style="color: #00ff41; margin-bottom: 20px;">⚙️ Системные настройки</h2>
+                        
+                        <div class="setting-item">
+                            <div>
+                                <strong>Автообновление данных</strong>
+                                <p style="opacity: 0.7; font-size: 14px;">Обновлять метрики каждые 3 секунды</p>
+                            </div>
+                            <div class="toggle-switch active" onclick="toggleSetting(this, 'autoUpdate')" id="autoUpdateToggle">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div>
+                                <strong>Звуковые уведомления</strong>
+                                <p style="opacity: 0.7; font-size: 14px;">Звук при изменении статуса системы</p>
+                            </div>
+                            <div class="toggle-switch" onclick="toggleSetting(this, 'soundAlerts')" id="soundAlertsToggle">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div>
+                                <strong>Темная тема</strong>
+                                <p style="opacity: 0.7; font-size: 14px;">Использовать темное оформление интерфейса</p>
+                            </div>
+                            <div class="toggle-switch active" onclick="toggleSetting(this, 'darkTheme')" id="darkThemeToggle">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div>
+                                <strong>Matrix эффект</strong>
+                                <p style="opacity: 0.7; font-size: 14px;">Анимация падающего кода на фоне</p>
+                            </div>
+                            <div class="toggle-switch active" onclick="toggleSetting(this, 'matrixEffect')" id="matrixEffectToggle">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div>
+                                <strong>Расширенное логирование</strong>
+                                <p style="opacity: 0.7; font-size: 14px;">Детальное ведение журналов событий</p>
+                            </div>
+                            <div class="toggle-switch" onclick="toggleSetting(this, 'extendedLogging')" id="extendedLoggingToggle">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div>
+                                <strong>Уведомления в реальном времени</strong>
+                                <p style="opacity: 0.7; font-size: 14px;">Мгновенные уведомления о критических событиях</p>
+                            </div>
+                            <div class="toggle-switch active" onclick="toggleSetting(this, 'realTimeNotifications')" id="realTimeNotificationsToggle">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-card" style="border-color: rgba(255, 71, 87, 0.3);">
+                        <h2 style="color: #ff4757; margin-bottom: 20px;">⚠️ Опасная зона</h2>
+                        
+                        <div class="control-panel">
+                            <button class="control-btn danger" onclick="resetSettings()">
+                                🔄 Сброс настроек<br><small>Восстановить по умолчанию</small>
+                            </button>
+                            <button class="control-btn danger" onclick="clearAllLogs()">
+                                🗑️ Очистить логи<br><small>Удалить все журналы</small>
+                            </button>
+                            <button class="control-btn danger" onclick="factoryReset()">
+                                ⚠️ Заводской сброс<br><small>ПОЛНАЯ очистка системы</small>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let autoUpdateEnabled = true;
+        let systemStartTime = Date.now();
+        let activityCounter = 0;
+        let commandHistory = [];
+        let historyIndex = -1;
+        
+        // Test users
+        const testUsers = {
+            'admin@matrix.com': { 
+                password: 'admin123', 
+                name: 'Администратор', 
+                role: 'Системный администратор',
+                avatar: 'А',
+                accessLevel: 'ROOT'
+            },
+            'neo@matrix.com': { 
+                password: 'thematrix', 
+                name: 'Нео', 
+                role: 'Избранный',
+                avatar: 'Н',
+                accessLevel: 'ADMIN'
+            },
+            'trinity@matrix.com': { 
+                password: 'follow_rabbit', 
+                name: 'Тринити', 
+                role: 'Оператор',
+                avatar: 'Т',
+                accessLevel: 'USER'
+            }
+        };
+
+        // System data
+        let systemData = {
+            servers: [
+                { name: 'Web Server 01', ip: '192.168.1.10', status: 'online', load: 45, uptime: '99.9%' },
+                { name: 'Database Server', ip: '192.168.1.11', status: 'online', load: 67, uptime: '99.8%' },
+                { name: 'API Gateway', ip: '192.168.1.12', status: 'warning', load: 89, uptime: '98.5%' },
+                { name: 'Load Balancer', ip: '192.168.1.13', status: 'online', load: 23, uptime: '99.9%' },
+                { name: 'Cache Server', ip: '192.168.1.14', status: 'online', load: 34, uptime: '99.7%' },
+                { name: 'File Server', ip: '192.168.1.15', status: 'offline', load: 0, uptime: '0%' }
+            ],
+            threats: [
+                { type: 'DDoS Attack', source: '192.168.100.55', time: '15:23', severity: 'high' },
+                { type: 'Brute Force', source: '10.0.0.99', time: '15:18', severity: 'medium' },
+                { type: 'Port Scan', source: '172.16.0.33', time: '15:12', severity: 'low' },
+                { type: 'Malware Detected', source: 'Internal', time: '14:55', severity: 'high' },
+                { type: 'Unauthorized Access', source: '203.0.113.45', time: '14:33', severity: 'medium' }
+            ]
+        };
+
+        // Matrix rain effect
+        function createMatrixRain() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()アイウエオカキクケコ";
+            const container = document.getElementById('matrixBg');
+            
+            function createChar() {
+                const char = document.createElement('div');
+                char.className = 'matrix-char';
+                char.textContent = chars[Math.floor(Math.random() * chars.length)];
+                char.style.left = Math.random() * 100 + '%';
+                char.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                char.style.fontSize = (Math.random() * 6 + 12) + 'px';
+                container.appendChild(char);
+                
+                setTimeout(() => {
+                    if (char.parentNode) {
+                        char.remove();
+                    }
+                }, 5000);
+            }
+            
+            setInterval(createChar, 150);
+        }
+
+        // Quick login function
+        function quickLogin(email, password) {
+            document.getElementById('loginEmail').value = email;
+            document.getElementById('loginPassword').value = password;
+            login();
+        }
+
+        // Auth functions
+        function showRegister() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+        }
+
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (testUsers[email] && testUsers[email].password === password) {
+                currentUser = testUsers[email];
+                currentUser.email = email;
+                currentUser.loginTime = new Date();
+                
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                
+                updateUserInfo();
+                startSystem();
+                showNotification('Добро пожаловать в Matrix System!', 'success');
+                addActivity('Пользователь авторизован: ' + currentUser.name);
+            } else {
+                showNotification('Неверные учетные данные!', 'error');
+                addActivity('Неудачная попытка входа: ' + email);
+            }
+        }
+
+        function register() {
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            
+            if (name && email && password && password.length >= 6) {
+                testUsers[email] = {
+                    password: password,
+                    name: name,
+                    role: 'Новый пользователь',
+                    avatar: name.charAt(0).toUpperCase(),
+                    accessLevel: 'USER'
+                };
+                
+                currentUser = testUsers[email];
+                currentUser.email = email;
+                currentUser.loginTime = new Date();
+                
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                
+                updateUserInfo();
+                startSystem();
+                showNotification('Аккаунт создан успешно!', 'success');
+                addActivity('Зарегистрирован новый пользователь: ' + name);
+            } else {
+                showNotification('Заполните все поля. Пароль должен содержать минимум 6 символов.', 'error');
+            }
+        }
+
+        function logout() {
+            if (confirm('Вы уверены, что хотите выйти из системы?')) {
+                addActivity('Пользователь вышел из системы: ' + currentUser.name);
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.getElementById('dashboard').style.display = 'none';
+                currentUser = null;
+                clearInterval(updateInterval);
+                
+                // Clear form fields
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginPassword').value = '';
+            }
+        }
+
+        function updateUserInfo() {
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.name;
+                document.getElementById('userAvatar').textContent = currentUser.avatar;
+                document.getElementById('profileName').textContent = currentUser.name;
+                document.getElementById('profileEmail').textContent = currentUser.email;
+                document.getElementById('profileAvatar').textContent = currentUser.avatar;
+                document.getElementById('editName').value = currentUser.name;
+                document.getElementById('editEmail').value = currentUser.email;
+            }
+        }
+
+        // Navigation
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Remove active class from nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected section
+            const sectionElement = document.getElementById(section + 'Section');
+            if (sectionElement) {
+                sectionElement.classList.add('active');
+            }
+            
+            // Add active class to clicked nav item
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+            
+            // Special handling for network section
+            if (section === 'network') {
+                generateNetworkMap();
+            }
+            
+            addActivity('Переход в раздел: ' + section);
+        }
+
+        // System functions
+        function startSystem() {
+            systemStartTime = Date.now();
+            updateSystemTime();
+            updateUptime();
+            updateServers();
+            updateThreats();
+            
+            if (autoUpdateEnabled) {
+                startAutoUpdate();
+            }
+            
+            // Initial activity
+            setTimeout(() => addActivity('Система инициализирована'), 500);
+            setTimeout(() => addActivity('Все модули загружены'), 1000);
+            setTimeout(() => addActivity('Подключение к сети установлено'), 1500);
+        }
+
+        function updateSystemTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('ru-RU');
+            const element = document.getElementById('systemTime');
+            if (element) {
+                element.textContent = timeString;
+            }
+            setTimeout(updateSystemTime, 1000);
+        }
+
+        function updateUptime() {
+            const now = Date.now();
+            const uptime = now - systemStartTime;
+            const days = Math.floor(uptime / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((uptime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((uptime % (1000 * 60 * 60)) / (1000 * 60));
+            
+            const uptimeElement = document.getElementById('uptime');
+            if (uptimeElement) {
+                uptimeElement.textContent = `${days}д ${hours}ч ${minutes}м`;
+            }
+            
+            setTimeout(updateUptime, 60000); // Update every minute
+        }
+
+        // Metrics update
+        function updateMetrics() {
+            const metrics = [
+                { 
+                    id: 'cpu', 
+                    min: 20, 
+                    max: 95,
+                    changeMin: -5,
+                    changeMax: 5
+                },
+                { 
+                    id: 'memory', 
+                    min: 30, 
+                    max: 90,
+                    changeMin: -3,
+                    changeMax: 3
+                },
+                { 
+                    id: 'network', 
+                    min: 10, 
+                    max: 80,
+                    changeMin: -10,
+                    changeMax: 10
+                },
+                { 
+                    id: 'storage', 
+                    min: 70, 
+                    max: 95,
+                    changeMin: 0,
+                    changeMax: 2
+                }
+            ];
+
+            metrics.forEach(metric => {
+                const currentValue = parseInt(document.getElementById(metric.id + 'Value')?.textContent) || metric.min;
+                const change = Math.floor(Math.random() * (metric.changeMax - metric.changeMin + 1)) + metric.changeMin;
+                let newValue = currentValue + change;
+                
+                // Keep within bounds
+                newValue = Math.max(metric.min, Math.min(metric.max, newValue));
+                
+                const valueElement = document.getElementById(metric.id + 'Value');
+                const progressElement = document.getElementById(metric.id + 'Progress');
+                
+                if (valueElement) {
+                    valueElement.textContent = newValue + '%';
+                }
+                if (progressElement) {
+                    progressElement.style.width = newValue + '%';
+                }
+            });
+
+            // Update other metrics
+            updateRandomMetrics();
+        }
+
+        function updateRandomMetrics() {
+            // Users count
+            const users = Math.floor(Math.random() * 50) + 100;
+            const usersEl = document.getElementById('usersValue');
+            if (usersEl) usersEl.textContent = users;
+
+            // Temperature
+            const temp = Math.floor(Math.random() * 15) + 35;
+            const tempEl = document.getElementById('tempValue');
+            if (tempEl) tempEl.textContent = temp + '°C';
+
+            // Bandwidth
+            const bandwidth = (Math.random() * 2 + 0.5).toFixed(1);
+            const bandwidthEl = document.getElementById('bandwidthValue');
+            if (bandwidthEl) bandwidthEl.textContent = bandwidth + ' Gbps';
+
+            // Requests per second
+            const requests = Math.floor(Math.random() * 500) + 800;
+            const requestsEl = document.getElementById('requestsValue');
+            if (requestsEl) requestsEl.textContent = requests.toLocaleString();
+
+            // Response time
+            const response = Math.floor(Math.random() * 100) + 50;
+            const responseEl = document.getElementById('responseValue');
+            if (responseEl) responseEl.textContent = response + 'ms';
+
+            // Error rate
+            const errorRate = (Math.random() * 0.1).toFixed(3);
+            const errorEl = document.getElementById('errorValue');
+            if (errorEl) errorEl.textContent = errorRate + '%';
+
+            // Database queries
+            const dbQueries = Math.floor(Math.random() * 1000) + 4000;
+            const dbEl = document.getElementById('dbValue');
+            if (dbEl) dbEl.textContent = dbQueries.toLocaleString();
+
+            // Network metrics
+            const connections = Math.floor(Math.random() * 500) + 1500;
+            const connectionsEl = document.getElementById('connectionsValue');
+            if (connectionsEl) connectionsEl.textContent = connections.toLocaleString();
+
+            const dataTransfer = (Math.random() * 1 + 2).toFixed(1);
+            const dataTransferEl = document.getElementById('dataTransferValue');
+            if (dataTransferEl) dataTransferEl.textContent = dataTransfer + ' TB';
+
+            const latency = Math.floor(Math.random() * 20) + 5;
+            const latencyEl = document.getElementById('latencyValue');
+            if (latencyEl) latencyEl.textContent = latency + 'ms';
+
+            const packetLoss = (Math.random() * 0.05).toFixed(3);
+            const packetLossEl = document.getElementById('packetLossValue');
+            if (packetLossEl) packetLossEl.textContent = packetLoss + '%';
+        }
+
+        function updateServers() {
+            const serversList = document.getElementById('serversList');
+            if (!serversList) return;
+
+            serversList.innerHTML = '';
+            
+            systemData.servers.forEach(server => {
+                // Randomly update server load
+                server.load = Math.max(0, Math.min(100, server.load + (Math.random() * 10 - 5)));
+                
+                const serverDiv = document.createElement('div');
+                serverDiv.className = `server-item server-${server.status}`;
+                serverDiv.innerHTML = `
+                    <div class="server-info">
+                        <h4>${server.name}</h4>
+                        <p>${server.ip} • Load: ${Math.round(server.load)}% • Uptime: ${server.uptime}</p>
+                    </div>
+                    <div class="alert-status alert-${server.status === 'online' ? 'success' : server.status === 'warning' ? 'warning' : 'danger'}">
+                        ${server.status === 'online' ? 'Онлайн' : server.status === 'warning' ? 'Предупреждение' : 'Оффлайн'}
+                    </div>
+                `;
+                serversList.appendChild(serverDiv);
+            });
+        }
+
+        function updateThreats() {
+            const threatsList = document.getElementById('threatsList');
+            if (!threatsList) return;
+
+            threatsList.innerHTML = '';
+            
+            systemData.threats.slice(0, 5).forEach(threat => {
+                const threatDiv = document.createElement('div');
+                threatDiv.className = 'threat-item';
+                threatDiv.innerHTML = `
+                    <div>
+                        <strong>${threat.type}</strong><br>
+                        <small style="opacity: 0.7;">${threat.source}</small>
+                    </div>
+                    <div>
+                        <div class="alert-status alert-${threat.severity === 'high' ? 'danger' : threat.severity === 'medium' ? 'warning' : 'success'}">
+                            ${threat.severity === 'high' ? 'Критично' : threat.severity === 'medium' ? 'Средне' : 'Низко'}
+                        </div>
+                        <div style="font-size: 11px; opacity: 0.7; margin-top: 5px;">${threat.time}</div>
+                    </div>
+                `;
+                threatsList.appendChild(threatDiv);
+            });
+        }
+
+        // Activity logging
+        function addActivity(message, type = 'info') {
+            const activityLog = document.getElementById('activityLog');
+            if (!activityLog) return;
+
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('ru-RU');
+            
+            const icons = {
+                'info': 'ℹ️',
+                'success': '✅',
+                'warning': '⚠️',
+                'error': '❌',
+                'security': '🛡️',
+                'network': '🌐',
+                'system': '⚙️'
+            };
+
+            const activityDiv = document.createElement('div');
+            activityDiv.className = 'activity-item';
+            activityDiv.innerHTML = `
+                <div class="activity-time">${timeString}</div>
+                <div class="activity-message">${icons[type] || icons.info} ${message}</div>
+            `;
+            
+            activityLog.insertBefore(activityDiv, activityLog.firstChild);
+            
+            // Keep only last 20 items
+            while (activityLog.children.length > 20) {
+                activityLog.removeChild(activityLog.lastChild);
+            }
+            
+            activityCounter++;
+        }
+
+        // Terminal functionality
+        const terminalCommands = {
+            'help': `Доступные команды:
+    help        - показать эту справку
+    status      - статус системы
+    ps          - список процессов
+    netstat     - сетевые соединения
+    df          - использование дисков
+    top         - мониторинг процессов
+    uptime      - время работы системы
+    users       - активные пользователи
+    scan        - сканирование безопасности
+    backup      - создать резервную копию
+    reboot      - перезагрузить систему
+    clear       - очистить терминал
+    tutorial    - руководство пользователя
+    matrix      - ???`,
+            
+            'status': `Статус системы Matrix:
+    ✅ Все основные службы работают
+    🟡 Обнаружены незначительные предупреждения
+    🔒 Уровень безопасности: ЗЕЛЕНЫЙ
+    📊 Производительность: ОПТИМАЛЬНАЯ
+    🌐 Сетевое подключение: СТАБИЛЬНОЕ`,
+            
+            'ps': `PID    COMMAND               CPU    MEM
+    1234   matrix-core           15.2%  8.4%
+    5678   security-daemon       3.1%   2.8%
+    9012   network-monitor       5.7%   4.2%
+    3456   database-server       22.8%  15.6%
+    7890   web-server            8.9%   6.3%
+    2468   backup-service        1.2%   1.8%`,
+            
+            'netstat': `Активные сетевые соединения:
+    TCP    192.168.1.10:80      ESTABLISHED
+    TCP    192.168.1.11:3306    ESTABLISHED  
+    TCP    192.168.1.12:443     LISTENING
+    UDP    192.168.1.13:53      LISTENING
+    TCP    10.0.0.1:22          ESTABLISHED
+    
+    Всего соединений: 1,847`,
+            
+            'df': `Использование файловых систем:
+    /dev/sda1     450GB  370GB   80GB  82%  /
+    /dev/sda2     100GB   23GB   77GB  23%  /var
+    /dev/sda3     200GB  145GB   55GB  73%  /home
+    /dev/sdb1     1.0TB  756GB  244GB  76%  /data`,
+            
+            'top': `Топ процессов по использованию CPU:
+    PID    USER    %CPU   %MEM   COMMAND
+    3456   matrix  22.8   15.6   database-server
+    1234   root    15.2   8.4    matrix-core
+    7890   www     8.9    6.3    web-server
+    9012   matrix  5.7    4.2    network-monitor
+    5678   root    3.1    2.8    security-daemon`,
+            
+            'uptime': () => {
+                const now = Date.now();
+                const uptime = now - systemStartTime;
+                const days = Math.floor(uptime / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((uptime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((uptime % (1000 * 60 * 60)) / (1000 * 60));
+                return `Система работает: ${days} дней, ${hours} часов, ${minutes} минут
+    Загрузка системы: 0.45, 0.52, 0.38
+    Пользователей: ${Math.floor(Math.random() * 20) + 5}`;
+            },
+            
+            'users': () => {
+                const userCount = Math.floor(Math.random() * 50) + 10;
+                return `Активных пользователей в системе: ${userCount}
+    
+    USER     TTY      LOGIN@   IDLE
+    admin    pts/0    15:30    .
+    neo      pts/1    14:45    1:20
+    trinity  pts/2    16:10    .
+    morpheus pts/3    13:20    2:45`;
+            },
+            
+            'scan': `Запуск сканирования безопасности...
+    ████████████████████████████████ 100%
+    
+    Результаты сканирования:
+    ✅ Вирусы не обнаружены
+    ✅ Система защищена
+    ⚠️  Найдено 3 подозрительных подключения
+    ✅ Файловая система цела
+    ✅ Сетевые порты защищены`,
+            
+            'backup': `Создание резервной копии системы...
+    ████████████████████████████████ 100%
+    
+    Резервная копия создана успешно:
+    📁 Файл: matrix_backup_${new Date().toISOString().split('T')[0]}.tar.gz
+    📊 Размер: 2.4 GB
+    📅 Дата: ${new Date().toLocaleString('ru-RU')}
+    ✅ Целостность: Проверена`,
+            
+            'reboot': `Внимание! Перезагрузка системы...
+    🔄 Остановка служб...
+    🔄 Сохранение данных...
+    🔄 Подготовка к перезагрузке...
+    
+    Система будет перезагружена через 10 секунд.
+    Используйте Ctrl+C для отмены.`,
+            
+            'clear': 'CLEAR_TERMINAL',
+            
+            'tutorial': `Руководство пользователя Matrix System:
+    
+    1. Навигация: Используйте меню сверху для перехода между разделами
+    2. Мониторинг: Все метрики обновляются в реальном времени
+    3. Терминал: Поддерживает основные команды Unix/Linux
+    4. Безопасность: Автоматическое обнаружение угроз
+    5. Настройки: Персонализация интерфейса и уведомлений
+    
+    Для получения справки по командам введите 'help'`,
+            
+            'matrix': `Добро пожаловать в Matrix, Neo...
+    
+    Красная таблетка или синяя таблетка?
+    
+    ⠀⠀⠀⠀⠀⠀⢀⣠⣤⣶⣶⣿⣿⣶⣤⣄⡀⠀⠀⠀⠀⠀⠀
+    ⠀⠀⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀⠀⠀
+    ⠀⠀⠀⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣆⠀⠀⠀
+    ⠀⠀⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡆⠀⠀
+    ⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀
+    ⠀⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠀⠀
+    ⠀⠀⠈⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁⠀⠀
+    ⠀⠀⠀⠀⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠀⠀⠀⠀
+    ⠀⠀⠀⠀⠀⠀⠉⠻⢿⣿⣿⣿⣿⡿⠟⠉⠀⠀⠀⠀⠀⠀⠀
+    
+    There is no spoon.`
+        };
+
+        function handleTerminalInput(event) {
+            if (event.key === 'Enter') {
+                const input = document.getElementById('terminalInput');
+                const command = input.value.trim();
+                const terminal = document.getElementById('terminal');
+                
+                if (command) {
+                    commandHistory.push(command);
+                    historyIndex = commandHistory.length;
+                }
+                
+                // Add command to terminal
+                const commandLine = document.createElement('div');
+                commandLine.className = 'terminal-line';
+                commandLine.textContent = `admin@matrix:~$ ${command}`;
+                terminal.appendChild(commandLine);
+                
+                // Process command
+                executeTerminalCommand(command);
+                
+                // Clear input
+                input.value = '';
+                
+                // Scroll to bottom
+                terminal.scrollTop = terminal.scrollHeight;
+                
+                addActivity(`Выполнена команда: ${command}`, 'system');
+            } else if (event.key === 'ArrowUp') {
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    document.getElementById('terminalInput').value = commandHistory[historyIndex];
+                }
+                event.preventDefault();
+            } else if (event.key === 'ArrowDown') {
+                if (historyIndex < commandHistory.length - 1) {
+                    historyIndex++;
+                    document.getElementById('terminalInput').value = commandHistory[historyIndex];
+                } else {
+                    historyIndex = commandHistory.length;
+                    document.getElementById('terminalInput').value = '';
+                }
+                event.preventDefault();
+            }
+        }
+
+        function executeCommand(cmd) {
+            document.getElementById('terminalInput').value = cmd;
+            handleTerminalInput({ key: 'Enter', preventDefault: () => {} });
+        }
+
+        function executeTerminalCommand(command) {
+            const terminal = document.getElementById('terminal');
+            const lowerCommand = command.toLowerCase();
+            
+            if (terminalCommands[lowerCommand]) {
+                if (terminalCommands[lowerCommand] === 'CLEAR_TERMINAL') {
+                    terminal.innerHTML = `
+                        <div class="terminal-line">Matrix Terminal v3.2.1 - Advanced System Console</div>
+                        <div class="terminal-line">Copyright (c) 2024 Matrix Corporation. All rights reserved.</div>
+                        <div class="terminal-line">Connected to: matrix-core-01.local</div>
+                        <div class="terminal-line">User access level: ${currentUser?.accessLevel || 'USER'}</div>
+                        <div class="terminal-line"></div>
+                    `;
+                } else {
+                    const responseLine = document.createElement('div');
+                    responseLine.className = 'terminal-line';
+                    const response = typeof terminalCommands[lowerCommand] === 'function' 
+                        ? terminalCommands[lowerCommand]() 
+                        : terminalCommands[lowerCommand];
+                    responseLine.innerHTML = response.replace(/\n/g, '<br>');
+                    terminal.appendChild(responseLine);
+                }
+            } else if (lowerCommand) {
+                const errorLine = document.createElement('div');
+                errorLine.className = 'terminal-line';
+                errorLine.style.color = '#ff4757';
+                errorLine.textContent = `bash: ${command}: команда не найдена`;
+                terminal.appendChild(errorLine);
+                
+                const suggestionLine = document.createElement('div');
+                suggestionLine.className = 'terminal-line';
+                suggestionLine.style.color = '#ffa502';
+                suggestionLine.textContent = `Подсказка: введите 'help' для списка доступных команд`;
+                terminal.appendChild(suggestionLine);
+            }
+            
+            // Add new prompt
+            const promptLine = document.createElement('div');
+            promptLine.className = 'terminal-line';
+            promptLine.innerHTML = `admin@matrix:~$ <span id="cursor" style="animation: blink 1s infinite;">_</span>`;
+            terminal.appendChild(promptLine);
+        }
+
+        // Network map generation
+        function generateNetworkMap() {
+            const networkMap = document.getElementById('networkMap');
+            if (!networkMap) return;
+            
+            networkMap.innerHTML = '';
+            
+            const nodes = [
+                { name: 'Core', x: 50, y: 50, type: 'core' },
+                { name: 'Web', x: 20, y: 20, type: 'web' },
+                { name: 'DB', x: 80, y: 20, type: 'database' },
+                { name: 'API', x: 20, y: 80, type: 'api' },
+                { name: 'CDN', x: 80, y: 80, type: 'cdn' },
+                { name: 'FW', x: 50, y: 15, type: 'firewall' }
+            ];
+            
+            // Draw connections
+            const connections = [
+                [0, 1], [0, 2], [0, 3], [0, 4], [0, 5],
+                [1, 2], [3, 4]
+            ];
+            
+            connections.forEach(([from, to]) => {
+                const line = document.createElement('div');
+                line.className = 'network-connection';
+                const fromNode = nodes[from];
+                const toNode = nodes[to];
+                
+                const x1 = fromNode.x;
+                const y1 = fromNode.y;
+                const x2 = toNode.x;
+                const y2 = toNode.y;
+                
+                const length = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+                const angle = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
+                
+                line.style.left = Math.min(x1, x2) + '%';
+                line.style.top = Math.min(y1, y2) + '%';
+                line.style.width = length + '%';
+                line.style.transform = `rotate(${angle}deg)`;
+                line.style.transformOrigin = '0 50%';
+                
+                networkMap.appendChild(line);
+            });
+            
+            // Draw nodes
+            nodes.forEach((node, index) => {
+                const nodeElement = document.createElement('div');
+                nodeElement.className = 'network-node';
+                nodeElement.style.left = node.x + '%';
+                nodeElement.style.top = node.y + '%';
+                nodeElement.textContent = node.name;
+                nodeElement.title = `${node.name} Node (${node.type})`;
+                
+                nodeElement.addEventListener('click', () => {
+                    showNotification(`Узел ${node.name}: Статус OK`, 'success');
+                    addActivity(`Проверен узел сети: ${node.name}`, 'network');
+                });
+                
+                networkMap.appendChild(nodeElement);
+            });
+        }
+
+        // Control panel functions
+        function systemScan() {
+            showNotification('Запуск сканирования системы...', 'info');
+            addActivity('Начато сканирование системы', 'security');
+            
+            setTimeout(() => {
+                const threatsFound = Math.floor(Math.random() * 3);
+                if (threatsFound === 0) {
+                    showNotification('Сканирование завершено. Угроз не обнаружено.', 'success');
+                    addActivity('Сканирование завершено - система чиста', 'security');
+                } else {
+                    showNotification(`Найдено ${threatsFound} потенциальных угроз`, 'warning');
+                    addActivity(`Обнаружено угроз: ${threatsFound}`, 'security');
+                }
+            }, 3000);
+        }
+
+        function optimizeSystem() {
+            showNotification('Оптимизация системы...', 'info');
+            addActivity('Запущена оптимизация системы', 'system');
+            
+            setTimeout(() => {
+                showNotification('Система оптимизирована', 'success');
+                addActivity('Оптимизация завершена успешно', 'system');
+                // Slightly improve some metrics
+                updateMetrics();
+            }, 2500);
+        }
+
+        function backupData() {
+            showNotification('Создание резервной копии...', 'info');
+            addActivity('Начато резервное копирование', 'system');
+            
+            setTimeout(() => {
+                showNotification('Резервная копия создана успешно', 'success');
+                addActivity('Резервное копирование завершено', 'system');
+            }, 4000);
+        }
+
+        function updateSystem() {
+            showNotification('Проверка обновлений...', 'info');
+            addActivity('Проверка системных обновлений', 'system');
+            
+            setTimeout(() => {
+                const hasUpdates = Math.random() > 0.7;
+                if (hasUpdates) {
+                    showNotification('Доступны обновления системы', 'warning');
+                    addActivity('Найдены обновления - требуется установка', 'system');
+                } else {
+                    showNotification('Система обновлена до последней версии', 'success');
+                    addActivity('Обновления не требуются', 'system');
+                }
+            }, 2000);
+        }
+
+        function emergencyShutdown() {
+            if (confirm('⚠️ ВНИМАНИЕ! Вы действительно хотите выполнить экстренное отключение системы?\n\nЭто действие остановит все службы немедленно!')) {
+                showNotification('🚨 ЭКСТРЕННОЕ ОТКЛЮЧЕНИЕ АКТИВИРОВАНО!', 'error');
+                addActivity('🚨 АКТИВИРОВАНО ЭКСТРЕННОЕ ОТКЛЮЧЕНИЕ', 'error');
+                
+                setTimeout(() => {
+                    alert('Система переведена в безопасный режим.\nВсе критические службы остановлены.');
+                }, 1000);
+            }
+        }
+
+        function generateReport() {
+            showNotification('Генерация системного отчета...', 'info');
+            addActivity('Создание системного отчета', 'system');
+            
+            setTimeout(() => {
+                const reportData = `
+=== ОТЧЕТ О СОСТОЯНИИ СИСТЕМЫ MATRIX ===
+Дата генерации: ${new Date().toLocaleString('ru-RU')}
+Оператор: ${currentUser?.name || 'Неизвестно'}
+
+СИСТЕМНЫЕ МЕТРИКИ:
+- CPU: ${document.getElementById('cpuValue')?.textContent || 'N/A'}
+- Память: ${document.getElementById('memoryValue')?.textContent || 'N/A'}
+- Сеть: ${document.getElementById('networkValue')?.textContent || 'N/A'}
+- Хранилище: ${document.getElementById('storageValue')?.textContent || 'N/A'}
+
+СТАТУС СЕРВЕРОВ:
+${systemData.servers.map(s => `- ${s.name}: ${s.status.toUpperCase()}`).join('\n')}
+
+СОБЫТИЯ БЕЗОПАСНОСТИ:
+${systemData.threats.slice(0, 3).map(t => `- ${t.time}: ${t.type} (${t.severity})`).join('\n')}
+
+=== КОНЕЦ ОТЧЕТА ===
+                `;
+                
+                // Create downloadable report
+                const blob = new Blob([reportData], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `matrix_report_${new Date().toISOString().split('T')[0]}.txt`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                showNotification('Отчет создан и загружен', 'success');
+                addActivity('Системный отчет сгенерирован', 'system');
+            }, 1500);
+        }
+
+        // Settings functions
+        function toggleSetting(element, settingName) {
+            element.classList.toggle('active');
+            const isEnabled = element.classList.contains('active');
+            
+            const settings = {
+                'autoUpdate': 'Автообновление',
+                'soundAlerts': 'Звуковые уведомления',
+                'darkTheme': 'Темная тема',
+                'matrixEffect': 'Matrix эффект',
+                'extendedLogging': 'Расширенное логирование',
+                'realTimeNotifications': 'Уведомления в реальном времени'
+            };
+            
+            const settingDisplayName = settings[settingName] || settingName;
+            const status = isEnabled ? 'включено' : 'выключено';
+            
+            showNotification(`${settingDisplayName} ${status}`, 'info');
+            addActivity(`Настройка "${settingDisplayName}" ${status}`, 'system');
+            
+            // Apply settings
+            if (settingName === 'autoUpdate') {
+                autoUpdateEnabled = isEnabled;
+                if (isEnabled) {
+                    startAutoUpdate();
+                } else {
+                    clearInterval(updateInterval);
+                }
+            } else if (settingName === 'matrixEffect') {
+                const matrixBg = document.getElementById('matrixBg');
+                if (matrixBg) {
+                    matrixBg.style.display = isEnabled ? 'block' : 'none';
+                }
+            }
+        }
+
+        function resetSettings() {
+            if (confirm('Сбросить все настройки к значениям по умолчанию?')) {
+                // Reset all toggles to default state
+                document.querySelectorAll('.toggle-switch').forEach(toggle => {
+                    const defaultActive = ['autoUpdateToggle', 'darkThemeToggle', 'matrixEffectToggle', 'realTimeNotificationsToggle'];
+                    const toggleId = toggle.id;
+                    
+                    if (defaultActive.includes(toggleId)) {
+                        toggle.classList.add('active');
+                    } else {
+                        toggle.classList.remove('active');
+                    }
+                });
+                
+                showNotification('Настройки сброшены к значениям по умолчанию', 'success');
+                addActivity('Настройки системы сброшены', 'system');
+            }
+        }
+
+        function clearAllLogs() {
+            if (confirm('Очистить все журналы системы?\n\nЭто действие нельзя отменить!')) {
+                const activityLog = document.getElementById('activityLog');
+                if (activityLog) {
+                    activityLog.innerHTML = '';
+                }
+                
+                

@@ -1,0 +1,8 @@
+Internal Database URL: postgresql://matrix_user:mVqhehVKabCp0FGf35NTSJKlRGXXLoPi@dpg-d17eeoemcj7s73d45j40-a/matrix_ai
+External Database URL: postgresql://matrix_user:mVqhehVKabCp0FGf35NTSJKlRGXXLoPi@dpg-d17eeoemcj7s73d45j40-a.frankfurt-postgres.render.com/matrix_ai
+PSQL Command: PGPASSWORD=mVqhehVKabCp0FGf35NTSJKlRGXXLoPi psql -h dpg-d17eeoemcj7s73d45j40-a.frankfurt-postgres.render.com -U matrix_user matrix_ai
+Database Name: matrix_ai
+Username: matrix_user
+Password: mVqhehVKabCp0FGf35NTSJKlRGXXLoPi
+Host: dpg-d17eeoemcj7s73d45j40-a
+Port: 5432

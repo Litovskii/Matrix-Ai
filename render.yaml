@@ -1,0 +1,53 @@
+services:
+  # Бэкенд API
+  - type: web
+    name: matrix-ai-api
+    env: node
+    region: frankfurt
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DB_USERNAME
+        value: matrix_user
+      - key: DB_PASSWORD
+        value: mVqhehVKabCp0FGf35NTSJKlRGXXLoPi
+      - key: DB_NAME
+        value: matrix_ai
+      - key: DB_HOST
+        value: dpg-d17eeoemcj7s73d45j40-a.frankfurt-postgres.render.com
+      - key: DB_PORT
+        value: 5432
+      - key: JWT_SECRET
+        value: matrix_ai_secret_key_for_jwt_tokens_d17eeoemcj7s73d45j40
+      - key: JWT_EXPIRES_IN
+        value: 24h
+
+  # Веб-приложение
+  - type: web
+    name: matrix-ai-web
+    env: node
+    region: frankfurt
+    plan: free
+    buildCommand: cd web-app && npm install && npm run build
+    startCommand: cd web-app && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: REACT_APP_API_URL
+        fromService:
+          name: matrix-ai-api
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+
+databases:
+  # База данных PostgreSQL
+  - name: matrix-ai-db
+    region: frankfurt
+    plan: free
+    ipAllowList: [] 
