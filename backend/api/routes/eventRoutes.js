@@ -10,6 +10,7 @@ const { body, query, validationResult } = require('express-validator');
 const db = require('../../models');
 const authMiddleware = require('../middleware/auth');
 const { isAnalyst } = require('../middleware/roles');
+const textAnalyzer = require('../../ai/textAnalyzer');
 
 // Получение списка событий с фильтрацией и пагинацией
 router.get('/', authMiddleware, async (req, res) => {
@@ -272,6 +273,67 @@ router.get('/stats/summary', authMiddleware, async (req, res) => {
   } catch (error) {
     console.error('Ошибка при получении статистики по событиям:', error);
     res.status(500).json({ message: 'Ошибка сервера при получении статистики по событиям' });
+  }
+});
+
+// Анализ текста с использованием нейронной сети
+router.post('/analyze', authMiddleware, [
+  body('text').notEmpty().withMessage('Текст для анализа не может быть пустым')
+], async (req, res) => {
+  // Проверяем валидацию
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  
+  try {
+    const { text, sourceId } = req.body;
+    
+    // Анализируем текст с помощью нейронной сети
+    const analysis = await textAnalyzer.analyzeText(text);
+    
+    // Если указан sourceId, создаем событие в базе данных
+    if (sourceId) {
+      const source = await db.Source.findByPk(sourceId);
+      if (!source) {
+        return res.status(404).json({ message: 'Источник не найден' });
+      }
+      
+      // Определяем категорию и важность на основе анализа
+      const category = analysis.classification.topCategory;
+      let severity = 'low';
+      if (analysis.threatLevel === 'высокий') severity = 'high';
+      else if (analysis.threatLevel === 'средний') severity = 'medium';
+      
+      // Создаем событие
+      const event = await db.Event.create({
+        title: `Анализ текста: ${text.substring(0, 50)}${text.length > 50 ? '...' : ''}`,
+        content: text,
+        type: 'text',
+        category: category.replace('_', ' '),
+        severity,
+        confidence: analysis.classification.confidence,
+        sourceUrl: '',
+        status: 'new',
+        sourceId,
+        metadata: {
+          analysis: analysis
+        },
+        createdBy: req.user.id
+      });
+      
+      // Возвращаем результат анализа и созданное событие
+      return res.json({
+        analysis,
+        event
+      });
+    }
+    
+    // Если sourceId не указан, просто возвращаем результат анализа
+    res.json({ analysis });
+  } catch (error) {
+    console.error('Ошибка при анализе текста:', error);
+    res.status(500).json({ message: 'Ошибка сервера при анализе текста' });
   }
 });
 
